@@ -9,8 +9,20 @@ const app = express()
 app.use(express.json())
 
 app.get('/', (req, res) => {
-  console.log(req.headers)
   res.send('Hello, World')
+})
+
+app.get('/api/users', (req, res) => {
+  db.find().then(data => {
+    res.status(200).json(data)
+  })
+})
+
+app.get('/api/users/:id', (req, res) => {
+  const id = req.params.id
+  db.findById(id).then(data => {
+    res.status(200).json(data)
+  })
 })
 
 app.listen(PORT, () => {
