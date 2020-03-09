@@ -13,16 +13,29 @@ app.get('/', (req, res) => {
 })
 
 app.get('/api/users', (req, res) => {
-  db.find().then(data => {
-    res.status(200).json(data)
-  })
+  db.find()
+    .then(data => {
+      res.status(200).json(data)
+    })
+    .catch(() => {
+      res.status(500).json({
+        errorMessage: "The users' information could not be retrieved."
+      })
+    })
 })
 
 app.get('/api/users/:id', (req, res) => {
   const id = req.params.id
-  db.findById(id).then(data => {
-    res.status(200).json(data)
-  })
+  db.findById(id)
+    .then(data => {
+      if (res.data === undefined) {
+        res.status(404).json({ message: `No user with id ${id} found` })
+      }
+      res.status(200).json(data)
+    })
+    .catch(err => {
+      res.status(500).send(err)
+    })
 })
 
 app.listen(PORT, () => {
