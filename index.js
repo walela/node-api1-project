@@ -1,4 +1,3 @@
-// implement your API here
 const express = require('express')
 const db = require('./data/db')
 
@@ -28,7 +27,7 @@ app.get('/api/users/:id', (req, res) => {
   const id = req.params.id
   db.findById(id)
     .then(data => {
-      if (res.data === undefined) {
+      if (data === undefined) {
         res.status(404).json({ message: `No user with id ${id} found` })
         return
       }
@@ -59,6 +58,23 @@ app.post('/api/users', (req, res) => {
         errorMessage: 'There was an error while saving the user to the database'
       })
     })
+})
+
+app.delete('/api/users/:id', (req, res) => {
+  const userId = req.params.id
+
+  db.findById(userId).then(data => {
+    if (data === undefined) {
+      res.status(404).json({ message: `No user with id ${userId} found` })
+      return
+    }
+    res.status(200).json(data)
+    db.remove(userId)
+      .then(delCount => console.log(`${delCount} records deleted`))
+      .catch(() => {
+        res.status(500).json({ errorMessage: 'The user could not be removed' })
+      })
+  })
 })
 
 app.listen(PORT, () => {
