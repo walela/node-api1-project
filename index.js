@@ -30,11 +30,34 @@ app.get('/api/users/:id', (req, res) => {
     .then(data => {
       if (res.data === undefined) {
         res.status(404).json({ message: `No user with id ${id} found` })
+        return
       }
       res.status(200).json(data)
     })
     .catch(err => {
       res.status(500).send(err)
+    })
+})
+
+app.post('/api/users', (req, res) => {
+  const newUser = req.body
+  if (!newUser.name || !newUser.bio) {
+    res
+      .status(400)
+      .json({ errorMessage: 'Please provide name and bio for the user' })
+    return
+  }
+  db.insert(newUser)
+    .then(data => {
+      db.findById(data.id).then(createdUser => {
+        res.status(201).json(createdUser)
+      })
+    })
+    .catch(err => {
+      console.log(err)
+      res.status(500).json({
+        errorMessage: 'There was an error while saving the user to the database'
+      })
     })
 })
 
