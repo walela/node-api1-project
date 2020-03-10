@@ -85,39 +85,31 @@ app.delete('/api/users/:id', async (req, res) => {
   }
 })
 
-// DOESN'T WORK
-
-
-app.put('/api/users/:id', (req, res) => {
-  const userId = req.params.id
+app.put('/api/users/:id', async (req, res) => {
+  const { id } = req.params
   const update = req.body
 
-  db.findById(userId).then(data => {
-    if (data === undefined) {
-      res.status(404).json({ message: `No user with id ${userId} found` })
-      return
-    }
-  })
-
-  if (!update.name || !update.bio) {
-    res
-      .status(400)
-      .json({ errorMessage: 'Please provide name and bio for the user' })
+  const user = await db.findById(id)
+  if (!user) {
+    res.status(404).json({ message: `No user with id ${id} found` })
     return
-  } else {
-    db.update(userId, update)
-      .then(() => {
-        db.findById(userId).then(data => {
-          res.status(200).json(data)
-        })
-      })
-      .catch(err => {
-        res
-          .status(500)
-          .json({ errorMessage: 'The user information could not be modified.' })
-      })
+  }
+
+  const validUpdate = validateUser(update, res)
+  if (validUpdate) {
+    try {
+      await db.update(id, update)
+      const updatedUser = await db.findById(id)
+      res.status(200).json(updatedUser)
+    } catch (err) {
+      logError(err)
+      res
+        .status(500)
+        .json({ errorMessage: 'The user information could not be modified.' })
+    }
   }
 })
+
 
 app.listen(PORT, () => {
   console.log(`App listening on port ${PORT}!`)
