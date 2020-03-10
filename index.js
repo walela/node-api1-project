@@ -1,11 +1,13 @@
 const express = require('express')
+const cors = require('cors')
 const db = require('./data/db')
 
-const PORT = 3000
+const PORT = 4040
 
 const app = express()
 
 app.use(express.json())
+app.use(cors())
 
 app.get('/', (req, res) => {
   res.send('Hello, World')
@@ -109,7 +111,6 @@ app.put('/api/users/:id', async (req, res) => {
     }
   }
 })
-
 
 app.listen(PORT, () => {
   console.log(`App listening on port ${PORT}!`)
