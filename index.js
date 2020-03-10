@@ -77,6 +77,39 @@ app.delete('/api/users/:id', (req, res) => {
   })
 })
 
+app.put('/api/users:id', (req, res) => {
+  const userId = req.params.id
+  const update = req.body
+
+  db.findById(userId).then(data => {
+    if (data === undefined) {
+      res.status(404).json({ message: `No user with id ${userId} found` })
+      return
+    }
+  })
+
+  if (!update.name || !update.bio) {
+    res
+      .status(400)
+      .json({ errorMessage: 'Please provide name and bio for the user' })
+    return
+  } else {
+    db.update(userId, update)
+      .then(() => {
+        db.findById(userId).then(data => {
+          console.log(data)
+          res.status(200).json(data)
+        })
+      })
+      .catch(err => {
+        console.log(err)
+        res
+          .status(500)
+          .json({ errorMessage: 'The user information could not be modified.' })
+      })
+  }
+})
+
 app.listen(PORT, () => {
   console.log(`App listening on port ${PORT}!`)
 })
