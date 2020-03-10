@@ -11,32 +11,61 @@ app.get('/', (req, res) => {
   res.send('Hello, World')
 })
 
-app.get('/api/users', (req, res) => {
-  db.find()
-    .then(data => {
-      res.status(200).json(data)
+const logError = err => console.log('💩:', err)
+
+app.get('/api/users', async (req, res) => {
+  try {
+    const users = await db.find()
+    res.status(200).json(users)
+  } catch (err) {
+    logError(err)
+    res.status(500).json({
+      errorMessage: "The users' information could not be retrieved."
     })
-    .catch(() => {
-      res.status(500).json({
-        errorMessage: "The users' information could not be retrieved."
-      })
-    })
+  }
 })
 
-app.get('/api/users/:id', (req, res) => {
-  const id = req.params.id
-  db.findById(id)
-    .then(data => {
-      if (data === undefined) {
-        res.status(404).json({ message: `No user with id ${id} found` })
-        return
-      }
-      res.status(200).json(data)
-    })
-    .catch(err => {
-      res.status(500).send(err)
-    })
+// app.get('/api/users', (req, res) => {
+//   db.find()
+//     .then(data => {
+//       res.status(200).json(data)
+//     })
+//     .catch(() => {
+//       res.status(500).json({
+//         errorMessage: "The users' information could not be retrieved."
+//       })
+//     })
+// })
+
+app.get('/api/users/:id', async (req, res) => {
+  const { id } = req.params
+
+  try {
+    const user = await db.findById(id)
+    if (!user) {
+      res.status(404).json({ message: `No user with id ${id} found` })
+    }
+    res.status(200).json(user)
+  } catch (err) {
+    logError(err)
+    res.status(500).send(err)
+  }
 })
+
+// app.get('/api/users/:id', (req, res) => {
+//   const id = req.params.id
+//   db.findById(id)
+//     .then(data => {
+//       if (data === undefined) {
+//         res.status(404).json({ message: `No user with id ${id} found` })
+//         return
+//       }
+//       res.status(200).json(data)
+//     })
+//     .catch(err => {
+//       res.status(500).send(err)
+//     })
+// })
 
 app.post('/api/users', (req, res) => {
   const newUser = req.body
@@ -97,12 +126,10 @@ app.put('/api/users:id', (req, res) => {
     db.update(userId, update)
       .then(() => {
         db.findById(userId).then(data => {
-          console.log(data)
           res.status(200).json(data)
         })
       })
       .catch(err => {
-        console.log(err)
         res
           .status(500)
           .json({ errorMessage: 'The user information could not be modified.' })
