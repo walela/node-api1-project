@@ -18,11 +18,12 @@ const validateUser = (user, res) => {
     res
       .status(400)
       .json({ errorMessage: 'Please provide name and bio for the user' })
-    return
+    return false
   }
+  return true
 }
 
-app.get('/api/users', async (req, res) => {
+app.get('/api/users', async (_, res) => {
   try {
     const users = await db.find()
     res.status(200).json(users)
@@ -33,18 +34,6 @@ app.get('/api/users', async (req, res) => {
     })
   }
 })
-
-// app.get('/api/users', (req, res) => {
-//   db.find()
-//     .then(data => {
-//       res.status(200).json(data)
-//     })
-//     .catch(() => {
-//       res.status(500).json({
-//         errorMessage: "The users' information could not be retrieved."
-//       })
-//     })
-// })
 
 app.get('/api/users/:id', async (req, res) => {
   const { id } = req.params
@@ -61,75 +50,57 @@ app.get('/api/users/:id', async (req, res) => {
   }
 })
 
-// app.get('/api/users/:id', (req, res) => {
-//   const id = req.params.id
-//   db.findById(id)
-//     .then(data => {
-//       if (data === undefined) {
-//         res.status(404).json({ message: `No user with id ${id} found` })
-//         return
-//       }
-//       res.status(200).json(data)
-//     })
-//     .catch(err => {
-//       res.status(500).send(err)
-//     })
-// })
-
 app.post('/api/users', async (req, res) => {
   const newUser = req.body
-  validateUser(newUser, res)
+  const validUser = validateUser(newUser, res)
 
-  try {
-    const { id } = await db.insert(newUser)
-    const createdUser = await db.findById(id)
-    res.status(201).json(createdUser)
-  } catch (err) {
-    logError(err)
-    res.status(500).json({
-      errorMessage: 'There was an error while saving the user to the database'
-    })
+  if (validUser) {
+    try {
+      const { id } = await db.insert(newUser)
+      const createdUser = await db.findById(id)
+      res.status(201).json(createdUser)
+    } catch (err) {
+      logError(err)
+      res.status(500).json({
+        errorMessage: 'There was an error while saving the user to the database'
+      })
+    }
   }
 })
 
-// app.post('/api/users', (req, res) => {
-//   const newUser = req.body
-//   if (!newUser.name || !newUser.bio) {
-//     res
-//       .status(400)
-//       .json({ errorMessage: 'Please provide name and bio for the user' })
-//     return
-//   }
-//   db.insert(newUser)
-//     .then(data => {
-//       db.findById(data.id).then(createdUser => {
-//         res.status(201).json(createdUser)
-//       })
-//     })
-//     .catch(err => {
-//       console.log(err)
-//       res.status(500).json({
-//         errorMessage: 'There was an error while saving the user to the database'
-//       })
-//     })
-// })
+app.delete('/api/users/:id', async (req, res) => {
+  const { id } = req.params
 
-app.delete('/api/users/:id', (req, res) => {
-  const userId = req.params.id
-
-  db.findById(userId).then(data => {
-    if (data === undefined) {
-      res.status(404).json({ message: `No user with id ${userId} found` })
+  try {
+    const user = await db.findById(id)
+    if (!user) {
+      res.status(404).json({ message: `No user with id ${id} found` })
       return
     }
-    res.status(200).json(data)
-    db.remove(userId)
-      .then(delCount => console.log(`${delCount} records deleted`))
-      .catch(() => {
-        res.status(500).json({ errorMessage: 'The user could not be removed' })
-      })
-  })
+    res.status(200).json(user)
+    await db.remove(id)
+  } catch (err) {
+    logError(err)
+    res.status(500).json({ errorMessage: 'The user could not be removed' })
+  }
 })
+
+// app.delete('/api/users/:id', (req, res) => {
+//   const userId = req.params.id
+
+//   db.findById(userId).then(data => {
+//     if (data === undefined) {
+//       res.status(404).json({ message: `No user with id ${userId} found` })
+//       return
+//     }
+//     res.status(200).json(data)
+//     db.remove(userId)
+//       .then(delCount => console.log(`${delCount} records deleted`))
+//       .catch(() => {
+//         res.status(500).json({ errorMessage: 'The user could not be removed' })
+//       })
+//   })
+// })
 
 app.put('/api/users:id', (req, res) => {
   const userId = req.params.id
