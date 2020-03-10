@@ -4,6 +4,45 @@ import axios from 'axios'
 
 import './app.css'
 
+const AddForm = () => {
+  const initialFormData = { name: '', bio: '' }
+  const [userForm, setUserForm] = useState(initialFormData)
+
+  const handleChange = e => {
+    setUserForm({ ...userForm, [e.target.name]: e.target.value })
+  }
+
+  const handleSubmit = e => {
+    e.preventDefault()
+    axios
+      .post('http://localhost:4040/api/users', userForm)
+      .then(console.log, console.error)
+      .finally(setUserForm(initialFormData))
+  }
+  return (
+    <div className='userForm'>
+      <label>
+        <input
+          placeholder='Name'
+          name='name'
+          value={userForm.name}
+          onChange={handleChange}
+        />
+      </label>
+      <label>
+        <textarea
+          placeholder='Bio'
+          name='bio'
+          value={userForm.bio}
+          onChange={handleChange}
+        />
+      </label>
+
+      <button onClick={handleSubmit}>ADD</button>
+    </div>
+  )
+}
+
 const App = () => {
   const [users, setUsers] = useState([])
 
@@ -39,6 +78,7 @@ const App = () => {
           )
         })}
       </div>
+      <AddForm />
     </div>
   )
 }
