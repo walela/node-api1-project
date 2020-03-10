@@ -13,6 +13,15 @@ app.get('/', (req, res) => {
 
 const logError = err => console.log('💩:', err)
 
+const validateUser = (user, res) => {
+  if (!user.name || !user.bio) {
+    res
+      .status(400)
+      .json({ errorMessage: 'Please provide name and bio for the user' })
+    return
+  }
+}
+
 app.get('/api/users', async (req, res) => {
   try {
     const users = await db.find()
@@ -67,27 +76,43 @@ app.get('/api/users/:id', async (req, res) => {
 //     })
 // })
 
-app.post('/api/users', (req, res) => {
+app.post('/api/users', async (req, res) => {
   const newUser = req.body
-  if (!newUser.name || !newUser.bio) {
-    res
-      .status(400)
-      .json({ errorMessage: 'Please provide name and bio for the user' })
-    return
+  validateUser(newUser, res)
+
+  try {
+    const { id } = await db.insert(newUser)
+    const createdUser = await db.findById(id)
+    res.status(201).json(createdUser)
+  } catch (err) {
+    logError(err)
+    res.status(500).json({
+      errorMessage: 'There was an error while saving the user to the database'
+    })
   }
-  db.insert(newUser)
-    .then(data => {
-      db.findById(data.id).then(createdUser => {
-        res.status(201).json(createdUser)
-      })
-    })
-    .catch(err => {
-      console.log(err)
-      res.status(500).json({
-        errorMessage: 'There was an error while saving the user to the database'
-      })
-    })
 })
+
+// app.post('/api/users', (req, res) => {
+//   const newUser = req.body
+//   if (!newUser.name || !newUser.bio) {
+//     res
+//       .status(400)
+//       .json({ errorMessage: 'Please provide name and bio for the user' })
+//     return
+//   }
+//   db.insert(newUser)
+//     .then(data => {
+//       db.findById(data.id).then(createdUser => {
+//         res.status(201).json(createdUser)
+//       })
+//     })
+//     .catch(err => {
+//       console.log(err)
+//       res.status(500).json({
+//         errorMessage: 'There was an error while saving the user to the database'
+//       })
+//     })
+// })
 
 app.delete('/api/users/:id', (req, res) => {
   const userId = req.params.id
