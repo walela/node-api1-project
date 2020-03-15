@@ -1,0 +1,83 @@
+.user-table {
+  width: 75vw;
+}
+table {
+  border: 1px solid grey;
+  border-radius: 5px;
+}
+
+th,
+td {
+  border: 1px solid black;
+  padding: 6px;
+}
+
+th {
+  font-family: 'Stardos Stencil';
+  font-size: 18px;
+  background-color: lightgreen;
+}
+
+td {
+  font-family: 'Stardos Stencil';
+  font-size: 16px;
+}
+tr:nth-child(even) {
+  background-color: lightgrey;
+}
+tr:nth-child(odd) {
+  background-color: lightyellow;
+}
+
+td button {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 16px;
+  padding: 12px;
+  margin: 3px;
+}
+
+.content {
+  width: 90vw;
+  display: flex;
+  justify-content: space-between;
+}
+
+input,
+textarea {
+  display: block;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 18px;
+  width: 30vw;
+  margin-bottom: 8px;
+  margin-right: 12px;
+  padding: 12px;
+  border-radius: 5px;
+  outline: none;
+  border: 1px solid black;
+}
+
+input:focus,
+textarea:focus {
+  border: 2px solid blueviolet;
+}
+
+textarea {
+  height: 30vh;
+}
+
+button {
+  font-family: 'JetBrains Mono';
+  font-size: 16px;
+  padding: 12px;
+  margin: 3px;
+  background-color: rgb(76, 76, 196);
+  outline: none;
+  border: none;
+  border-radius: 4px;
+  color: white;
+  font-weight: bold;
+}
+
+button:hover {
+  background-color: rgb(54, 54, 189);
+}
