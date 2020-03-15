@@ -1,70 +1,83 @@
-:root {
-  margin: 0;
-  padding: 0;
-  background-color: rgb(218, 229, 250);
+.user-table {
+  width: 75vw;
+}
+table {
+  border: 1px solid grey;
+  border-radius: 5px;
 }
 
-h1 {
-  text-align: center;
+th,
+td {
+  border: 1px solid black;
+  padding: 6px;
+}
+
+th {
   font-family: 'Stardos Stencil';
-  text-decoration: underline;
+  font-size: 18px;
+  background-color: lightgreen;
 }
 
-.users {
-  width: 80vw;
-  display: flex;
-  justify-content: space-around;
-  flex-wrap: wrap;
-  margin: 0 auto;
-}
-
-.user {
-  border: 2px solid black;
-  border-radius: 4px;
-  margin-right: 12px;
-  margin-bottom: 24px;
-  padding: 2px 6px 0 12px;
-  width: 25vw;
+td {
   font-family: 'Stardos Stencil';
   font-size: 16px;
 }
-h2 {
-  font-family: 'JetBrains Mono';
-  text-decoration: underline brown;
+tr:nth-child(even) {
+  background-color: lightgrey;
+}
+tr:nth-child(odd) {
+  background-color: lightyellow;
 }
 
-button {
-  font-family: 'Fira Code';
+td button {
+  font-family: 'JetBrains Mono', monospace;
   font-size: 16px;
-  font-weight: bold;
   padding: 12px;
-  border: none;
-  border-radius: 2px;
-  outline: none;
-  background-color: rgb(233, 90, 71);
-  margin-bottom: 5px;
+  margin: 3px;
 }
 
-button:hover {
-  background-color: rgb(209, 64, 45);
+.content {
+  width: 90vw;
+  display: flex;
+  justify-content: space-between;
 }
 
 input,
 textarea {
-  padding: 12px;
-  font-family: 'Stardos Stencil';
-  font-size: 1.5rem;
   display: block;
-  margin: 12px;
-  width: 24vw;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 18px;
+  width: 30vw;
+  margin-bottom: 8px;
+  margin-right: 12px;
+  padding: 12px;
+  border-radius: 5px;
+  outline: none;
+  border: 1px solid black;
 }
 
-.userForm {
-  margin: 0 auto;
-  width: 20vw;
+input:focus,
+textarea:focus {
+  border: 2px solid blueviolet;
 }
 
-.userForm button {
-  background-color: rgb(155, 167, 223);
-  margin-left: 12px;
+textarea {
+  height: 30vh;
+}
+
+button {
+  font-family: 'JetBrains Mono';
+  font-size: 16px;
+  padding: 12px;
+  margin: 3px;
+  background-color: rgb(76, 76, 196);
+  outline: none;
+  border: none;
+  border-radius: 4px;
+  color: white;
+  font-weight: bold;
+}
+
+button:hover {
+  background-color: rgb(54, 54, 189);
 }

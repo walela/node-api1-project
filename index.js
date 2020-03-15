@@ -17,9 +17,7 @@ const logError = err => console.log('💩:', err)
 
 const validateUser = (user, res) => {
   if (!user.name || !user.bio) {
-    res
-      .status(400)
-      .json({ errorMessage: 'Please provide name and bio for the user' })
+    res.status(400).json({ errorMessage: 'Please provide name and bio for the user' })
     return false
   }
   return true
@@ -105,9 +103,7 @@ app.put('/api/users/:id', async (req, res) => {
       res.status(200).json(updatedUser)
     } catch (err) {
       logError(err)
-      res
-        .status(500)
-        .json({ errorMessage: 'The user information could not be modified.' })
+      res.status(500).json({ errorMessage: 'The user information could not be modified.' })
     }
   }
 })
